@@ -7,7 +7,7 @@
 #   5. confirma que o OpenWA gravou a URL e que a assinatura passa (teste → 200)
 # Ctrl+C derruba API e túnel juntos.
 #
-# Uso: ./scripts/dev.sh            (a partir de services/chat-service)
+# Uso: ./scripts/dev.sh            (a partir da raiz do projeto)
 # Opcional no .env: OPENWA_SESSION_ID (senão usa a primeira sessão do OpenWA)
 set -euo pipefail
 
@@ -37,8 +37,9 @@ owa() {  # owa METHOD PATH [JSON]
 }
 
 # ---------- 1. dependências ----------
-info "Subindo containers (Mongo do chat e OpenWA)"
-docker start chatservice-mongo openwa-api >/dev/null
+info "Subindo containers (Mongo, MySQL fake e OpenWA)"
+docker compose up -d chat-mongo chat-mysql >/dev/null
+docker start openwa-api >/dev/null
 retry 30 1 curl -sf -m 3 -o /dev/null "${OPENWA_API_URL%/api}/api/docs-json" \
   || die "OpenWA não respondeu em $OPENWA_API_URL"
 ok "Containers de pé"

@@ -4,10 +4,10 @@ COPY --from=ghcr.io/astral-sh/uv:0.12.15 /uv /uvx /bin/
 
 WORKDIR /app
 
-COPY services/chat-service/pyproject.toml services/chat-service/uv.lock ./
+COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-install-project --no-dev
 
-COPY services/chat-service/ .
+COPY . .
 RUN uv sync --frozen --no-dev
 
 FROM python:3.12-slim

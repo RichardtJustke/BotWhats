@@ -1,0 +1,56 @@
+# Stack do bot: API + Mongo (histórico) + MySQL com beneficiários fictícios.
+# O OpenWA (gateway do WhatsApp) sobe à parte, pelo docker-compose.dev.yml,
+# e conversa com o bot pela rede compartilhada `chat-network`:
+#   docker network create chat-network
+#   docker compose up -d --build
+services:
+  chat-service:
+    build: .
+    container_name: chat-service
+    env_file: .env
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/app/chroma_data
+    depends_on:
+      - chat-mongo
+      - chat-mysql
+    restart: unless-stopped
+    networks: [chat-network]
+
+  chat-mongo:
+    image: mongo:7
+    container_name: chat-mongo
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+    networks: [chat-network]
+
+  # Banco de demonstração (bancoFake/): só leitura para o bot
+  chat-mysql:
+    image: mysql:8
+    container_name: chat-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: beneficiarios
+      MYSQL_USER: chatservice
+      MYSQL_PASSWORD: chatservice
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./bancoFake/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./bancoFake/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    networks: [chat-network]
+
+volumes:
+  chroma_data:
+  mongo_data:
+  mysql_data:
+
+networks:
+  chat-network:
+    external: true

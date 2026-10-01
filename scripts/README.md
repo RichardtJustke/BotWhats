@@ -1,6 +1,6 @@
 # scripts/
 
-Rodar sempre a partir de `services/chat-service/`. Os scripts shell leem o
+Rodar sempre a partir da raiz do projeto. Os scripts shell leem o
 `.env` e precisam de `curl` e `jq`.
 
 | Script | Quando usar |
@@ -34,7 +34,7 @@ uv run python scripts/ingest.py
 ./scripts/dev.sh
 ```
 
-1. sobe os containers `chatservice-mongo` e `openwa-api`;
+1. sobe `chat-mongo` e `chat-mysql` (compose) e o container `openwa-api`;
 2. (re)inicia o uvicorn com `--reload` na porta `PORT` (8000);
 3. abre um túnel `cloudflared` e pega a URL `trycloudflare.com`;
 4. aponta o webhook do OpenWA para essa URL e testa a entrega.
@@ -59,7 +59,3 @@ Clona o OpenWA, gera os segredos, sobe o OpenWA com o
 `docker-compose.dev.yml` desta pasta, conecta as redes, pareia a sessão do
 WhatsApp por código e cadastra o webhook. É idempotente.
 
-> ⚠️ O passo que sobe `chat-service` e `chat-mongo` espera um
-> `docker-compose.yml` em `services/chat-service/`, que não existe mais: hoje
-> o chat-service está no compose da raiz. Esse passo precisa ser ajustado
-> antes de usar o script de novo.

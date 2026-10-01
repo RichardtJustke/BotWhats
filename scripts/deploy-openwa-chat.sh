@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 # Deploy ponta a ponta do OpenWA + chat-service no servidor:
-#   1. clona (ou atualiza) o OpenWA em services/chat-service/openwa
+#   1. clona (ou atualiza) o OpenWA em ./openwa
 #   2. garante a rede compartilhada `chat-network`
 #   3. gera os segredos do OpenWA (API key mestre) e sobe o stack dele
 #   4. conecta o openwa-api na rede compartilhada + libera o SSRF allowlist
 #   5. preenche o .env do chat-service com os segredos gerados e sobe
-#      chat-service + chat-mongo (docker-compose.yml próprio, em
-#      services/chat-service/ — não depende do compose da raiz)
+#      chat-service + chat-mongo + chat-mysql (docker-compose.yml da raiz)
 #   6. cria/pareia uma sessão do WhatsApp (código de pareamento por telefone)
 #   7. cadastra o webhook do OpenWA apontando pro chat-service
 #
@@ -14,10 +13,10 @@
 # segredos já preenchidos, só completa o que falta).
 #
 # Uso (de qualquer lugar):
-#   ./services/chat-service/scripts/deploy-openwa-chat.sh
+#   ./scripts/deploy-openwa-chat.sh
 #
 # Variáveis opcionais:
-#   OPENWA_DIR           pasta onde clonar o OpenWA (padrão: services/chat-service/openwa)
+#   OPENWA_DIR           pasta onde clonar o OpenWA (padrão: ./openwa)
 #   OPENWA_REPO          URL do repo do OpenWA (padrão: github.com/rmyndharis/OpenWA)
 #   OPENWA_PHONE_NUMBER  telefone p/ pareamento, só dígitos com DDI (ex: 5511999999999)
 #                        se não for passado, o script pergunta interativamente
@@ -143,12 +142,10 @@ needs_attention() {  # KEY DEV_DEFAULT
   local v; v="$(get_env_var "$CHAT_DIR/.env" "$1")"
   [ -z "$v" ] || [ "$v" = "$2" ]
 }
-# MYSQL_USER/MYSQL_DB não entram aqui: o .env.example já traz os nomes reais
-# esperados (chatservice / beneficiarios) — só host e senha são
-# específicos de cada servidor e não têm como eu adivinhar.
 needs_attention OPENROUTER_API_KEY "" && missing+=(OPENROUTER_API_KEY)
-needs_attention MYSQL_HOST "localhost" && missing+=(MYSQL_HOST)
-needs_attention MYSQL_PASSWORD "" && missing+=(MYSQL_PASSWORD)
+# MySQL: sem configuração própria, usa o chat-mysql (bancoFake) do compose
+set_env_var "$CHAT_DIR/.env" MYSQL_HOST "chat-mysql" "localhost"
+set_env_var "$CHAT_DIR/.env" MYSQL_PASSWORD "chatservice"
 if [ "${#missing[@]}" -gt 0 ]; then
   if [ -t 0 ]; then
     warn "Faltam segredos que eu não posso inventar — preenche agora (Enter pula e deixa em branco):"
@@ -165,8 +162,8 @@ if [ "${#missing[@]}" -gt 0 ]; then
   fi
 fi
 
-info "Subindo chat-service + chat-mongo"
-docker compose up -d --build chat-service chat-mongo
+info "Subindo chat-service + chat-mongo + chat-mysql"
+docker compose up -d --build
 
 info "Aguardando chat-service ficar saudável"
 for _ in $(seq 60); do

@@ -28,13 +28,7 @@ MAX_TRANSCRIPT_MESSAGES = 40
 # pacote tzdata na imagem Docker
 _TZ = timezone(timedelta(hours=-3))
 
-_SUMMARY_PROMPT = f"""Você resume atendimentos de WhatsApp da {config.COMPANY_NAME} (administradora de
-planos de saúde) para o próximo atendente ler em segundos.
-
-Escreva UMA ou DUAS frases curtas, em português, dizendo o que o cliente queria
-e como terminou (resolvido, encaminhado para atendente, ficou pendente).
-Não inclua CPF, telefone, e-mail, valores ou qualquer número de documento.
-Não invente nada que não esteja na conversa. Sem markdown, sem aspas."""
+_SUMMARY_PROMPT = config.load_prompt("summary")
 
 _SPEAKER = {"user": "Cliente", "llm": config.BOT_NAME, "system": config.BOT_NAME, "human": "Atendente"}
 

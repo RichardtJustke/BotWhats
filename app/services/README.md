@@ -22,7 +22,7 @@ A consulta usa sempre o CPF **confirmado**, nunca um CPF digitado na mensagem.
 ### Resposta com IA
 | Arquivo | O que faz |
 |---|---|
-| [`rag.py`](rag.py) | busca os 3 trechos mais parecidos no Chroma (sem o tema `cancelamento`), monta o prompt (`SYSTEM_PROMPT_BASE`) e chama o OpenRouter com fallback entre os modelos de `OPENROUTER_MODELS`. Troca por resposta segura qualquer telefone que não esteja no contexto. |
+| [`rag.py`](rag.py) | busca os 3 trechos mais parecidos no Chroma (sem o tema `cancelamento`), monta o prompt (lido de `prompts/system.md`) e chama o OpenRouter com fallback entre os modelos de `OPENROUTER_MODELS`. Troca por resposta segura qualquer telefone que não esteja no contexto. |
 | [`summaries.py`](summaries.py) | `summary_watcher`: resume em background os atendimentos encerrados de beneficiários confirmados. O resumo só volta no prompt quando o **mesmo CPF** for confirmado de novo. |
 
 ### Escalonamento e sessão
@@ -41,7 +41,7 @@ A consulta usa sempre o CPF **confirmado**, nunca um CPF digitado na mensagem.
 
 ## Onde mexer para…
 
-- **mudar o que o bot fala ou pode falar**: `SYSTEM_PROMPT_BASE` em `rag.py`;
+- **mudar o que o bot fala ou pode falar**: `prompts/system.md`;
 - **nova palavra-chave que manda para humano**: padrões em `escalation.py`;
 - **mudar a mensagem de confirmação ou de boletos**: `identification.py` / `boletos.py`;
 - **tempos de sessão e horário de atendimento**: variáveis no `.env`, não no código.

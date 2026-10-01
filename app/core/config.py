@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -57,6 +58,7 @@ APP_STORE_URL = os.getenv("APP_STORE_URL", "")
 PLAY_STORE_URL = os.getenv("PLAY_STORE_URL", "")
 
 KB_PLACEHOLDERS = {
+    "bot": BOT_NAME,
     "empresa": COMPANY_NAME,
     "app": COMPANY_APP_NAME,
     "email_atendimento": SUPPORT_EMAIL,
@@ -71,6 +73,14 @@ def fill_placeholders(text: str) -> str:
     for key, value in KB_PLACEHOLDERS.items():
         text = text.replace("{{" + key + "}}", value)
     return text
+
+
+PROMPTS_DIR = Path(__file__).resolve().parent.parent.parent / "prompts"
+
+
+def load_prompt(name: str) -> str:
+    """Lê prompts/<name>.md já com os dados da empresa preenchidos."""
+    return fill_placeholders((PROMPTS_DIR / f"{name}.md").read_text(encoding="utf-8")).strip()
 
 _REQUIRED_VARS = {
     "OPENWA_API_KEY": OPENWA_API_KEY,

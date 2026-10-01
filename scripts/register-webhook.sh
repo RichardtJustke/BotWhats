@@ -3,7 +3,7 @@
 # secret do .env, e confirma com um teste de entrega. Pra servidor/Docker:
 # não sobe API nem túnel (pra dev local com cloudflared, use scripts/dev.sh).
 #
-# Uso (a partir de services/chat-service, no host onde o OpenWA roda):
+# Uso (a partir da raiz do projeto, no host onde o OpenWA roda):
 #   ./scripts/register-webhook.sh                       # URL padrão (rede Docker)
 #   ./scripts/register-webhook.sh https://meu.dominio/webhook/openwa
 #

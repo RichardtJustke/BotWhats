@@ -4,7 +4,7 @@
 # script sempre recadastra. Feito pra rodar como serviço systemd (reinicia
 # sozinho se o túnel cair, e sobe junto com o servidor).
 #
-# Uso manual (a partir de services/chat-service):
+# Uso manual (a partir da raiz do projeto):
 #   ./scripts/server-tunnel.sh
 #
 # Variáveis opcionais:
