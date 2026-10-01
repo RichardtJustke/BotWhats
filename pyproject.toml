@@ -1,0 +1,26 @@
+[project]
+name = "chat-service"
+version = "0.1.0"
+description = "Atendente virtual de WhatsApp para administradoras de benefícios (RAG + LLM)"
+readme = "README.md"
+authors = [
+    { name = "Richardt Justke", email = "rj.justke@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "aiomysql>=0.3.2",
+    "chromadb>=1.5.9",
+    "fastapi>=0.141.1",
+    "google-genai>=2.24.0",
+    "httpx>=0.28.1",
+    "motor>=3.7.1",
+    "python-dotenv>=1.2.3",
+    "uvicorn>=0.53.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.15,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv]
+package = false

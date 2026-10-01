@@ -1,0 +1,8 @@
+services/chat-service/.venv
+services/chat-service/**/__pycache__
+services/chat-service/**/*.pyc
+services/chat-service/.env
+services/chat-service/chroma_data
+services/chat-service/bancoFake
+services/chat-service/.python-version
+services/chat-service/README.md
